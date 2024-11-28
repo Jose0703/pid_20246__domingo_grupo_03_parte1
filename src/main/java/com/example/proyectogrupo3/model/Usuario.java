@@ -14,40 +14,16 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private Long id;
+    @Column(unique = true, nullable = false)
     private String nombre;
     private String apellido;
+    @Column(unique = true, nullable = false)
     private String email;
     private String password;
+    @Column(unique = true, nullable = false)
+    private String dni;
     private String telefono;
     private String direccion;
     private Long id_rol;
     private String estado;
-
-    public boolean validarDatos() {
-
-        if (nombre.isEmpty() || apellido.isEmpty()) {
-            System.out.println("Nombre y apellido son obligatorios");
-            return false;
-        }
-
-        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
-        if (!email.matches(emailRegex)) {
-            System.out.println("Correo electrónico inválido");
-            return false;
-        }
-
-
-        if (password.length() < 8) {
-            System.out.println("La contraseña debe tener al menos 8 caracteres");
-            return false;
-        }
-
-
-        if (nombre.length() < 6 || nombre.length() > 30) {
-            System.out.println("El nombre de usuario debe tener entre 6 y 30 caracteres");
-            return false;
-        }
-
-        return true;
-    }
 }
