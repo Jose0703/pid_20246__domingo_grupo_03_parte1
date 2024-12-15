@@ -110,8 +110,22 @@ public class ProyectoServiceImplement implements ProyectoService {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> eliminarProyecto(Long id) {
-        return null;
+    public ResponseEntity<Map<String, Object>> eliminarProyecto(Long id_proyecto) {
+        Map<String, Object> response = new HashMap<>();
+
+        if(!proyectoRepository.existsById(id_proyecto)) {
+            response.put("mensaje", "El proyecto no existe");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        try {
+            proyectoRepository.deleteById(id_proyecto);
+            response.put("mensaje", "Proyecto eliminado correctamente");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            response.put("mensaje", "Proyecto no existe");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
 }
