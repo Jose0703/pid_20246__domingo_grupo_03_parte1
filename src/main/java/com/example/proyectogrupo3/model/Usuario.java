@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -12,7 +13,7 @@ import javax.persistence.*;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name="id_usuario")
     private Long id;
     @Column(unique = true, nullable = false)
     private String nombre;
@@ -24,4 +25,6 @@ public class Usuario {
     private String dni;
     private String telefono;
     private String direccion;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Proyecto> proyectos;
 }
