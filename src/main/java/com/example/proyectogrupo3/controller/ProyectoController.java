@@ -24,7 +24,12 @@ public class ProyectoController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String,Object>> addProyecto(@RequestBody Proyecto proyecto) {
-        return  proyectoService.registrarProyecto(proyecto);
+    public ResponseEntity<Map<String,Object>> addProyecto(@RequestBody Proyecto proyecto, @RequestParam Long id_usuario) {
+        return  proyectoService.registrarProyecto(proyecto, id_usuario);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
+        return proyectoService.actualizarProyecto(proyecto, id);
     }
 }

@@ -24,6 +24,4 @@ public class Usuario {
     private String dni;
     private String telefono;
     private String direccion;
-    private Long id_rol;
-    private String estado;
 }
