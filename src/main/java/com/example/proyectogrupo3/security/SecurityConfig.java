@@ -44,6 +44,7 @@ public class SecurityConfig {
 				.and()
 				.addFilter(jwtAuthenticationFilter)
 				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+				.httpBasic(Customizer.withDefaults())
 				.build();
 	}
 	

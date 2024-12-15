@@ -10,11 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
-
 
 @Service
 public class ProyectoServiceImplement implements ProyectoService {
@@ -29,30 +29,15 @@ public class ProyectoServiceImplement implements ProyectoService {
         Map<String, Object> response = new HashMap<>();
         List<Proyecto> proyectos = proyectoRepository.findAll();
 
-        if (proyectos.isEmpty()) {
-            response.put("mensaje", "No se encontraron proyectos");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
-        } else {
-            proyectos.sort(Comparator.comparingLong(Proyecto::getIdProyecto));
-
-            List<Map<String, Object>> proyectosList = new ArrayList<>();
-            for (Proyecto proyecto : proyectos) {
-                Optional<Usuario> usuarioOpt = usuarioRepository.findById(proyecto.getUsuario().getId());
-                if (usuarioOpt.isPresent()) {
-                    Usuario usuario = usuarioOpt.get();
-                    Map<String, Object> proyectoMap = new HashMap<>();
-                    proyectoMap.put("idProyecto", proyecto.getIdProyecto());
-                    proyectoMap.put("nombre", proyecto.getNombre());
-                    proyectoMap.put("descripcion", proyecto.getDescripcion());
-                    proyectoMap.put("nombreUsuario", usuario.getNombre());
-                    proyectosList.add(proyectoMap);
-                } else {
-                    response.put("advertencia", "Usuario no encontrado para el proyecto ID " + proyecto.getIdProyecto());
-                }
-            }
-            response.put("mensaje", "Proyectos encontrados");
-            response.put("proyectos", proyectosList);
+        if (!proyectos.isEmpty()) {
+            response.put("mensaje", "Listado de proyectos");
+            response.put("Proyectos",proyectos);
+            response.put("status", HttpStatus.OK);
             return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            response.put("mensaje", "No existen registros");
+            response.put("status", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
@@ -85,9 +70,7 @@ public class ProyectoServiceImplement implements ProyectoService {
         response.put("mensaje", "Proyecto registrado correctamente");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
-    }
-
-    @Override
+@Override
     public ResponseEntity<Map<String, Object>> actualizarProyecto(Proyecto proyecto, Long id_proyecto) {
         Map<String, Object> response = new HashMap<>();
         Optional<Proyecto> proyectoExistente = proyectoRepository.findById(id_proyecto);
@@ -110,16 +93,16 @@ public class ProyectoServiceImplement implements ProyectoService {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> eliminarProyecto(Long id_proyecto) {
+    public ResponseEntity<Map<String, Object>> eliminarProyecto(Long id) {
         Map<String, Object> response = new HashMap<>();
 
-        if(!proyectoRepository.existsById(id_proyecto)) {
+        if(!proyectoRepository.existsById(id)) {
             response.put("mensaje", "El proyecto no existe");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
         try {
-            proyectoRepository.deleteById(id_proyecto);
+            proyectoRepository.deleteById(id);
             response.put("mensaje", "Proyecto eliminado correctamente");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e) {

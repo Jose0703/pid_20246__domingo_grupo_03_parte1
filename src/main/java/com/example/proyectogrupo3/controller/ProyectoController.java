@@ -1,6 +1,7 @@
 package com.example.proyectogrupo3.controller;
 
 import com.example.proyectogrupo3.model.Proyecto;
+import com.example.proyectogrupo3.model.Usuario;
 import com.example.proyectogrupo3.service.ProyectoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

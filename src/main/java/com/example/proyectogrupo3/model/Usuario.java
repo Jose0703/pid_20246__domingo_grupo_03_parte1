@@ -25,6 +25,4 @@ public class Usuario {
     private String dni;
     private String telefono;
     private String direccion;
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Proyecto> proyectos;
 }

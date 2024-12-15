@@ -1,12 +1,15 @@
 package com.example.proyectogrupo3.model;
 
 import lombok.Data;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "tb_proyecto")
+@EntityListeners(AuditingEntityListener.class)
 public class Proyecto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +25,9 @@ public class Proyecto {
 
     @Transient
     private String nombreUsuario;
-
+  
+    @PostLoad
+    public void setNombreUsuario() {
+        this.nombreUsuario = this.usuario != null ? this.usuario.getNombre() : null;
+    }
 }
