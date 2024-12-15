@@ -8,5 +8,7 @@ import java.util.Map;
 public interface ProyectoService {
 
     public ResponseEntity<Map<String,Object>> listarProyectos();
-    public ResponseEntity<Map<String,Object>> registrarProyecto(Proyecto proyecto);
+    public ResponseEntity<Map<String,Object>> registrarProyecto(Proyecto proyecto, Long id_usuario);
+    public ResponseEntity<Map<String,Object>> actualizarProyecto(Proyecto proyecto, Long id_proyecto);
+    public ResponseEntity<Map<String,Object>> eliminarProyecto(Long id);
 }

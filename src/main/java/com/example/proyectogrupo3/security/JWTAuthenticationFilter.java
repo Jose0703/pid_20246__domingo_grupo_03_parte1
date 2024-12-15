@@ -31,29 +31,27 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			authCredenciales = new ObjectMapper().readValue(request.getReader(), Auth.class);
 		} catch (Exception e) {
 		}
-		
+
 		UsernamePasswordAuthenticationToken userPAT = new UsernamePasswordAuthenticationToken(
 				authCredenciales.getEmail(),
 				authCredenciales.getPassword(),
 				Collections.emptyList()
 				);
-		
+
 		return getAuthenticationManager().authenticate(userPAT);
 	}
-	
+
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 
 		UserDetailImplement userDetails = (UserDetailImplement) authResult.getPrincipal();
 		String token = Token.crearToken(userDetails.getUser(), userDetails.getUsername());
-		
+
 		response.addHeader("Authorization", "Bearer "+ token);
 		response.getWriter().flush();
-		
+
 		super.successfulAuthentication(request, response, chain, authResult);
 	}
-	
-	
-	
+
 }

@@ -1,6 +1,7 @@
 package com.example.proyectogrupo3.controller;
 
 import com.example.proyectogrupo3.model.Proyecto;
+import com.example.proyectogrupo3.model.Usuario;
 import com.example.proyectogrupo3.service.ProyectoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,17 @@ public class ProyectoController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String,Object>> addProyecto(@RequestBody Proyecto proyecto) {
-        return  proyectoService.registrarProyecto(proyecto);
+    public ResponseEntity<Map<String,Object>> addProyecto(@RequestBody Proyecto proyecto, @RequestParam Long id_usuario) {
+        return  proyectoService.registrarProyecto(proyecto, id_usuario);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
+        return proyectoService.actualizarProyecto(proyecto, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> eliminarProyecto(@PathVariable Long id) {
+        return proyectoService.eliminarProyecto(id);
     }
 }
