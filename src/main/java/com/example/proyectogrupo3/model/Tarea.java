@@ -19,6 +19,7 @@ public class Tarea {
     private Date fechaVencimiento;
     private Boolean desarrollado;
     private String prioridad;
+  
     @ManyToOne
     @JoinColumn(name = "id_proyecto", nullable = false)
     private Proyecto proyecto;

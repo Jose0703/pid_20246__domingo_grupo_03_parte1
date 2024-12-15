@@ -33,7 +33,6 @@ public class ProyectoController {
     public ResponseEntity<Map<String, Object>> editarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
         return proyectoService.actualizarProyecto(proyecto, id);
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> eliminarProyecto(@PathVariable Long id) {
         return proyectoService.eliminarProyecto(id);

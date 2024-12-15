@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @Service
 public class ProyectoServiceImplement implements ProyectoService {
     @Autowired
@@ -72,9 +70,7 @@ public class ProyectoServiceImplement implements ProyectoService {
         response.put("mensaje", "Proyecto registrado correctamente");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
-    }
-
-    @Override
+@Override
     public ResponseEntity<Map<String, Object>> actualizarProyecto(Proyecto proyecto, Long id_proyecto) {
         Map<String, Object> response = new HashMap<>();
         Optional<Proyecto> proyectoExistente = proyectoRepository.findById(id_proyecto);
@@ -114,4 +110,5 @@ public class ProyectoServiceImplement implements ProyectoService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
+
 }

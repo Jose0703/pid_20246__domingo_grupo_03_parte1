@@ -25,6 +25,7 @@ public class Proyecto {
 
     @Transient
     private String nombreUsuario;
+  
     @PostLoad
     public void setNombreUsuario() {
         this.nombreUsuario = this.usuario != null ? this.usuario.getNombre() : null;
