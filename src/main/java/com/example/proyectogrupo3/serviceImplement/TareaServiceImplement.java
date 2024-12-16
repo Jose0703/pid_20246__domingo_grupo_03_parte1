@@ -151,5 +151,13 @@ public class TareaServiceImplement implements TareaService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
         }
     }
+
+    @Override
+    public Tarea agregarComentario(Long idTarea, String comentario) {
+        Tarea tarea = dao.findById(idTarea)
+                .orElseThrow(() -> new RuntimeException("Tarea no encontrada"));
+        tarea.getComentarios().add(comentario);
+        return dao.save(tarea);
+    }
 }
 
