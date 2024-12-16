@@ -45,4 +45,13 @@ public class TareaController {
         return service.eliminarTarea(id);
     }
 
+    @PostMapping("/{idTarea}/comentarios")
+    public ResponseEntity<Tarea> agregarComentario(@PathVariable Long idTarea, @RequestBody String comentario) {
+        try {
+            Tarea tarea = service.agregarComentario(idTarea, comentario);
+            return ResponseEntity.ok(tarea);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

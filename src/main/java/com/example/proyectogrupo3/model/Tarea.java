@@ -4,7 +4,9 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Table(name = "tb_tarea")
@@ -21,6 +23,12 @@ public class Tarea {
     private Date fechaVencimiento;
     private Boolean desarrollado;
     private String prioridad;
+
+    @ElementCollection
+    @CollectionTable(name = "tb_tarea_comentario", joinColumns = @JoinColumn(name = "id_tarea"))
+    @Column(name = "comentario")
+    private List<String> comentarios = new ArrayList<>();
+
 
     @ManyToOne
     @JoinColumn(name = "id_proyecto", nullable = false)
