@@ -29,7 +29,7 @@ public class TareaController {
         return service.listarTareaPorId(id);
     }
 
-    @PostMapping
+    @PostMapping("/tareas")
     public ResponseEntity<Map<String, Object>> agregarTarea(@Validated @RequestBody Tarea tarea){
         return service.registrarTarea(tarea);
     }

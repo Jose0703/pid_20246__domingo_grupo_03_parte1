@@ -1,6 +1,8 @@
 package com.example.proyectogrupo3.serviceImplement;
 
+import com.example.proyectogrupo3.model.Proyecto;
 import com.example.proyectogrupo3.model.Tarea;
+import com.example.proyectogrupo3.repository.ProyectoRepository;
 import com.example.proyectogrupo3.repository.TareaRepository;
 import com.example.proyectogrupo3.service.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class TareaServiceImplement implements TareaService {
 
     @Autowired
     private TareaRepository dao;
+    @Autowired
+    private ProyectoRepository proyectoRepository;
 
     @Override
     public ResponseEntity<Map<String, Object>> listarTarea() {
@@ -54,23 +58,52 @@ public class TareaServiceImplement implements TareaService {
         }
     }
 
-    @Override
     public ResponseEntity<Map<String, Object>> registrarTarea(Tarea tarea) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        if(dao.existsByNombre(tarea.getNombre())){
-            respuesta.put("mensaje", "Tarea existente con el mismo nombre");
-            respuesta.put("status", HttpStatus.CONFLICT);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
-        }else{
-            dao.save(tarea);
-            respuesta.put("Tarea", tarea);
-            respuesta.put("mensaje", "Se añadio correctamente la tarea");
-            respuesta.put("status", HttpStatus.CREATED);
-            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-        }
+        // Verificar si el Proyecto existe
+        Proyecto proyecto = tarea.getProyecto();
 
+        try {
+            // Verificar si el Proyecto existe en la base de datos antes de asociarlo
+            if (proyecto.getIdProyecto() != null) {
+                Proyecto finalProyecto = proyecto;
+                proyecto = proyectoRepository.findById(proyecto.getIdProyecto())
+                        .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + finalProyecto.getIdProyecto()));
+            } else {
+                // Si no tiene id, significa que es nuevo, se puede guardar el proyecto (si necesario)
+                proyectoRepository.save(proyecto);
+            }
+
+            // Asignar el Proyecto a la Tarea
+            tarea.setProyecto(proyecto);
+
+            // Verificar si la tarea ya existe
+            if (dao.existsByNombre(tarea.getNombre())) {
+                respuesta.put("mensaje", "Tarea existente con el mismo nombre");
+                respuesta.put("status", HttpStatus.CONFLICT);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
+            } else {
+                try {
+                    dao.save(tarea);  // Guardar la tarea
+                    respuesta.put("Tarea", tarea);
+                    respuesta.put("mensaje", "Se añadió correctamente la tarea");
+                    respuesta.put("status", HttpStatus.CREATED);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+                } catch (Exception e) {
+                    respuesta.put("mensaje", "Error interno del servidor: " + e.getMessage());
+                    respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
+                }
+            }
+        } catch (RuntimeException e) {
+            respuesta.put("mensaje", "Error al encontrar el proyecto: " + e.getMessage());
+            respuesta.put("status", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        }
     }
+
+
 
     @Override
     public ResponseEntity<Map<String, Object>> actualizarTarea(Tarea tarea, Long id) {
