@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -29,4 +30,12 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> addUsuaro(@RequestBody Usuario usuario){
         return service.registrarUsuario(usuario);
     }
+
+
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<Optional<Usuario>> obtenerUsuarioPorNombre(@PathVariable String nombre) {
+        Optional<Usuario> usuario = service.findByNombre(nombre);
+        return usuario.isPresent() ? ResponseEntity.ok(usuario) : ResponseEntity.notFound().build();
+    }
+
 }

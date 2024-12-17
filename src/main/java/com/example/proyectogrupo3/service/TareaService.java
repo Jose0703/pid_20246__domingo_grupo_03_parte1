@@ -4,6 +4,7 @@ import com.example.proyectogrupo3.model.Proyecto;
 import com.example.proyectogrupo3.model.Tarea;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 public interface TareaService {
@@ -14,5 +15,7 @@ public interface TareaService {
     public ResponseEntity<Map<String,Object>> eliminarTarea(Long id_proyecto);
     Tarea agregarComentario(Long idTarea, String comentario);
 
-
+    void asignarRolATarea(Long idTarea, Long IdUsuario, String rol);
+    List<Tarea> obtenerTareasConUsuariosYRoles();
+    Tarea guardarTarea(Tarea tarea);
 }
