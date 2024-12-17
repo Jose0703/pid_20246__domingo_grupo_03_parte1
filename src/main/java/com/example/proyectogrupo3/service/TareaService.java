@@ -14,4 +14,5 @@ public interface TareaService {
     public ResponseEntity<Map<String,Object>> eliminarTarea(Long id_proyecto);
     Tarea agregarComentario(Long idTarea, String comentario);
 
+
 }
