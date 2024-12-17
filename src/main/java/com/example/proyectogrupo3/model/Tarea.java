@@ -22,7 +22,8 @@ public class Tarea {
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
     private Boolean desarrollado;
-    private String prioridad;
+    @Enumerated(EnumType.STRING) // Esto guarda el nombre del Enum como texto
+    private Prioridad prioridad;
 
     @ElementCollection
     @CollectionTable(name = "tb_tarea_comentario", joinColumns = @JoinColumn(name = "id_tarea"))
@@ -33,5 +34,10 @@ public class Tarea {
     @ManyToOne
     @JoinColumn(name = "id_proyecto", nullable = false)
     private Proyecto proyecto;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario", nullable = true )
+    private Usuario asignadoA;
 
 }
