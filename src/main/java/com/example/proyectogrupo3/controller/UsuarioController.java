@@ -29,4 +29,6 @@ public class UsuarioController {
     public ResponseEntity<Map<String, Object>> addUsuaro(@RequestBody Usuario usuario){
         return service.registrarUsuario(usuario);
     }
+
+
 }

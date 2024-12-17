@@ -8,4 +8,6 @@ import java.util.Map;
 public interface UsuarioService {
     public ResponseEntity<Map<String, Object>> listarUsuarios();
     public ResponseEntity<Map<String, Object>> registrarUsuario(Usuario usuario);
+
+
 }
