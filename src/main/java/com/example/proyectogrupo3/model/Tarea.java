@@ -4,7 +4,9 @@ import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Table(name = "tb_tarea")
@@ -13,17 +15,26 @@ import java.util.Date;
 public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id_tarea;
     private String nombre;
     private String descripcion;
     @Temporal(TemporalType.DATE)
     private Date fechaVencimiento;
-    private Boolean desarrollado;
-    private String prioridad;
+    private String desarrollado;
+    @Enumerated(EnumType.STRING) // Esto guarda el nombre del Enum como texto
+    private Prioridad prioridad;
 
+    @ElementCollection
+    @CollectionTable(name = "comentarios_tarea", joinColumns = @JoinColumn(name = "id_tarea"))
+    @Column(name = "comentario")
+    private List<String> comentarios = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "id_proyecto", nullable = false)
     private Proyecto proyecto;
 
-}
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario", nullable = true )
+    private Usuario asignadoA;
+
+    }

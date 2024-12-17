@@ -25,4 +25,8 @@ public class Usuario {
     private String dni;
     private String telefono;
     private String direccion;
+    private String rol;
+
+
+
 }

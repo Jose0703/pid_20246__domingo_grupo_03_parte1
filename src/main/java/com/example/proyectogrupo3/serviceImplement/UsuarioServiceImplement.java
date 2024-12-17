@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import com.example.proyectogrupo3.repository.UsuarioRepository;
 import com.example.proyectogrupo3.service.UsuarioService;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioServiceImplement implements UsuarioService {
@@ -91,4 +89,13 @@ public class UsuarioServiceImplement implements UsuarioService {
         respuesta.put("fecha", new Date());
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
+
+    @Override
+    public Optional<Usuario> findByNombre(String nombre) {
+        // Llama al método de tu repositorio que busca el usuario por nombre
+        return repository.findByNombre(nombre);  // Esto devuelve un Optional<Usuario>
+    }
+
+
+
 }
