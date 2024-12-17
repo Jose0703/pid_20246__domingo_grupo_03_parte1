@@ -2,8 +2,10 @@ package com.example.proyectogrupo3.serviceImplement;
 
 import com.example.proyectogrupo3.model.Proyecto;
 import com.example.proyectogrupo3.model.Tarea;
+import com.example.proyectogrupo3.model.Usuario;
 import com.example.proyectogrupo3.repository.ProyectoRepository;
 import com.example.proyectogrupo3.repository.TareaRepository;
+import com.example.proyectogrupo3.repository.UsuarioRepository;
 import com.example.proyectogrupo3.service.TareaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -159,5 +161,7 @@ public class TareaServiceImplement implements TareaService {
         tarea.getComentarios().add(comentario);
         return dao.save(tarea);
     }
+
+
 }
 
