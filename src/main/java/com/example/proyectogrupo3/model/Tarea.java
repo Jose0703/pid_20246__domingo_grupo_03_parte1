@@ -1,5 +1,6 @@
 package com.example.proyectogrupo3.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -20,8 +21,9 @@ public class Tarea {
     private String nombre;
     private String descripcion;
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date fechaVencimiento;
-    private Boolean desarrollado;
+    private String desarrollado;
     @Enumerated(EnumType.STRING) // Esto guarda el nombre del Enum como texto
     private Prioridad prioridad;
 

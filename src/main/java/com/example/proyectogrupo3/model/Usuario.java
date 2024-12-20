@@ -1,5 +1,6 @@
 package com.example.proyectogrupo3.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -25,6 +26,7 @@ public class Usuario {
     private String dni;
     private String telefono;
     private String direccion;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String rol;
 
 }
