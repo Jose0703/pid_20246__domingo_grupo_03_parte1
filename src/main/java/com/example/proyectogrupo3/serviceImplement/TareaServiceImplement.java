@@ -71,79 +71,89 @@ public class TareaServiceImplement implements TareaService {
     public ResponseEntity<Map<String, Object>> registrarTarea(Tarea tarea) {
         Map<String, Object> respuesta = new HashMap<>();
 
-        // Verificar si el Proyecto existe
-        Proyecto proyecto = tarea.getProyecto();
-
         try {
-            // Verificar si el Proyecto existe en la base de datos antes de asociarlo
-            if (proyecto.getIdProyecto() != null) {
-                Proyecto finalProyecto = proyecto;
-                proyecto = proyectoRepository.findById(proyecto.getIdProyecto())
-                        .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + finalProyecto.getIdProyecto()));
-            } else {
-                // Si no tiene id, significa que es nuevo, se puede guardar el proyecto (si necesario)
-                proyectoRepository.save(proyecto);
+            // Validar que el proyecto no sea nulo
+            if (tarea.getProyecto() == null || tarea.getProyecto().getIdProyecto() == null) {
+                respuesta.put("mensaje", "El proyecto asociado es requerido y debe tener un ID válido.");
+                respuesta.put("status", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
             }
 
-            // Asignar el Proyecto a la Tarea
+            // Buscar el proyecto en la base de datos
+            Proyecto proyecto = proyectoRepository.findById(tarea.getProyecto().getIdProyecto())
+                    .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + tarea.getProyecto().getIdProyecto()));
+
+            // Asignar el proyecto a la tarea
             tarea.setProyecto(proyecto);
 
-            // Verificar si la tarea ya existe
+            // Validar que no exista una tarea con el mismo nombre
             if (dao.existsByNombre(tarea.getNombre())) {
-                respuesta.put("mensaje", "Tarea existente con el mismo nombre");
+                respuesta.put("mensaje", "Ya existe una tarea con el nombre: " + tarea.getNombre());
                 respuesta.put("status", HttpStatus.CONFLICT);
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
-            } else {
-                try {
-                    dao.save(tarea);  // Guardar la tarea
-                    respuesta.put("Tarea", tarea);
-                    respuesta.put("mensaje", "Se añadió correctamente la tarea");
-                    respuesta.put("status", HttpStatus.CREATED);
-                    return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-                } catch (Exception e) {
-                    respuesta.put("mensaje", "Error interno del servidor: " + e.getMessage());
-                    respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
-                }
             }
+
+            // Guardar la tarea
+            Tarea nuevaTarea = dao.save(tarea);
+
+            // Respuesta exitosa
+            respuesta.put("tarea", nuevaTarea);
+            respuesta.put("mensaje", "Tarea registrada correctamente.");
+            respuesta.put("status", HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+
         } catch (RuntimeException e) {
-            respuesta.put("mensaje", "Error al encontrar el proyecto: " + e.getMessage());
+            // Error relacionado con datos
+            respuesta.put("mensaje", "Error: " + e.getMessage());
             respuesta.put("status", HttpStatus.BAD_REQUEST);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+        } catch (Exception e) {
+            // Error interno del servidor
+            respuesta.put("mensaje", "Error interno del servidor: " + e.getMessage());
+            respuesta.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(respuesta);
         }
     }
-
 
 
     @Override
     public ResponseEntity<Map<String, Object>> actualizarTarea(Tarea tarea, Long id) {
         Map<String, Object> respuesta = new HashMap<>();
         Optional<Tarea> tareaExiste = dao.findById(id);
-        if(tareaExiste.isPresent()){
+
+        if (tareaExiste.isPresent()) {
             Tarea tareaGet = tareaExiste.get();
 
-            if(dao.existsByNombre(tarea.getNombre())){
+            // Verificar si ya existe una tarea con el mismo nombre
+            if (dao.existsByNombre(tarea.getNombre())) {
                 respuesta.put("mensaje", "Ya existe una tarea con este nombre");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(respuesta);
             }
 
+            // Actualizar los campos de la tarea
             tareaGet.setNombre(tarea.getNombre());
             tareaGet.setDescripcion(tarea.getDescripcion());
             tareaGet.setFechaVencimiento(tarea.getFechaVencimiento());
             tareaGet.setDesarrollado(tarea.getDesarrollado());
             tareaGet.setPrioridad(tarea.getPrioridad());
-            tareaGet.setProyecto(tarea.getProyecto());
-            dao.save(tarea);
+            tareaGet.setProyecto(tarea.getProyecto()); // Aquí aseguramos que el proyecto esté bien asignado
+
+            // Guardar la tarea actualizada
+            dao.save(tareaGet);  // Cambié 'tarea' por 'tareaGet', ya que 'tareaGet' es la tarea modificada
+
+            // Responder con la tarea actualizada
             respuesta.put("tarea", tareaGet);
-            respuesta.put("mensaje", "Datos de la tarea modificada");
+            respuesta.put("mensaje", "Datos de la tarea modificados");
             respuesta.put("status", HttpStatus.CREATED);
             return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-        }else{
-            respuesta.put("mensaje", "sin registros con ID: "+ id);
+        } else {
+            // Si no se encuentra la tarea
+            respuesta.put("mensaje", "Sin registros con ID: " + id);
             respuesta.put("status", HttpStatus.NOT_FOUND);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
         }
     }
+
 
     @Override
     public ResponseEntity<Map<String, Object>> eliminarTarea(Long id) {
@@ -214,7 +224,7 @@ public class TareaServiceImplement implements TareaService {
         if (tarea.getAsignadoA() != null) {
             Usuario usuario = usuarioRepository.findById(tarea.getAsignadoA().getId()).orElse(null);
             if (usuario != null) {
-                tarea.setAsignadoA(usuario);
+                tarea.setAsignadoA(usuario);  // Asigna el usuario a la tarea
             } else {
                 throw new RuntimeException("Usuario no encontrado.");
             }
@@ -224,15 +234,17 @@ public class TareaServiceImplement implements TareaService {
         if (tarea.getProyecto() != null) {
             Proyecto proyecto = proyectoRepository.findById(tarea.getProyecto().getIdProyecto()).orElse(null);
             if (proyecto != null) {
-                tarea.setProyecto(proyecto);
+                tarea.setProyecto(proyecto);  // Asigna el proyecto a la tarea
             } else {
                 throw new RuntimeException("Proyecto no encontrado.");
             }
         }
 
-        // Guarda la tarea en la base de datos
-        return dao.save(tarea);
+        // Si el ID ya existe, actualiza la tarea, si no, guarda una nueva con el ID proporcionado
+        return dao.save(tarea);  // Guarda o actualiza la tarea con el ID proporcionado
     }
+
+
 
 
 }

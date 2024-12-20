@@ -21,18 +21,15 @@ public class TareaController {
     @Autowired
     private TareaService service;
 
-    @GetMapping
-    public ResponseEntity<Map<String,Object>> listTarea(){
-        return service.listarTarea();
-    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> listaPorID(@PathVariable Long id){
         return service.listarTareaPorId(id);
     }
 
-    @PostMapping("/tareas")
-    public ResponseEntity<Map<String, Object>> agregarTarea(@Validated @RequestBody Tarea tarea){
+    @PostMapping("tarea")
+    public ResponseEntity<Map<String, Object>> agregarTarea(@Validated @RequestBody Tarea tarea) {
         return service.registrarTarea(tarea);
     }
 
