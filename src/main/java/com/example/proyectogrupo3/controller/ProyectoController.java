@@ -24,6 +24,9 @@ public class ProyectoController {
         return proyectoService.listarProyectos();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> listarPorId(@PathVariable Long id){ return proyectoService.listarProyectosPorId(id); };
+
     @PostMapping
     public ResponseEntity<Map<String,Object>> addProyecto(@RequestBody Proyecto proyecto, @RequestParam Long id_usuario) {
         return  proyectoService.registrarProyecto(proyecto, id_usuario);
