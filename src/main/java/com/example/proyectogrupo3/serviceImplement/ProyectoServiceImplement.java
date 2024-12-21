@@ -44,6 +44,23 @@ public class ProyectoServiceImplement implements ProyectoService {
     }
 
     @Override
+    public ResponseEntity<Map<String, Object>> listarProyectosPorId(Long id) {
+        Map<String, Object> respuesta = new HashMap<>();
+        Optional<Proyecto> proyectos = proyectoRepository.findById(id);
+
+        if (!proyectos.isEmpty()){
+            respuesta.put("proyectos", proyectos);
+            respuesta.put("mensaje", "busqueda correcta");
+            respuesta.put("status", HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(respuesta);
+        }else{
+            respuesta.put("mensaje", "No existen registros con el ID: " + id);
+            respuesta.put("status", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuesta);
+        }
+    }
+
+    @Override
     public ResponseEntity<Map<String, Object>> registrarProyecto(Proyecto proyecto, @RequestParam(required = false) Long id_usuario) {
         System.out.println("Entrando al método registrarProyecto");
         Map<String, Object> response = new HashMap<>();
